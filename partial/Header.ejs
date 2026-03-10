@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    <%= title %>
+  </title>
+  <link rel="stylesheet" href="/tailwind-build.css">
+</head>
+
+<body>
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200/60 shadow-sm">
+  <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative">
+
+    <div class="flex h-16 items-center justify-between gap-3">
+      
+      <!-- Logo -->
+      <a href="/home" class="group flex items-center gap-2 text-gray-900">
+        <svg class="h-8 w-8 text-teal-600 transition group-hover:text-teal-700"
+          fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM11 17h2v-6h-2v6zm0-8h2V7h-2v2z" />
+        </svg>
+        <span class="text-lg font-semibold tracking-tight">MySite</span>
+      </a>
+
+      <!-- Mobile Button -->
+      <button id="nav-button"
+        class="inline-flex items-center justify-center rounded-xl border border-gray-200/70 bg-white/80 p-2 text-gray-700 shadow-sm backdrop-blur transition hover:bg-white md:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
+      <!-- Navigation -->
+      <nav id="nav-item"
+        class="hidden absolute left-0 top-full w-full mt-2 rounded-2xl border border-gray-200/70 bg-white/95 p-2 shadow-lg backdrop-blur md:static md:mt-0 md:flex md:w-auto md:items-center md:justify-between md:border-0 md:bg-transparent md:p-0 md:shadow-none transition-all duration-300">
+
+        <!-- Center Links -->
+        <ul class="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-1 text-sm p-2 md:p-0 mx-auto font-medium">
+
+          <li>
+            <a href="/home"
+              class="rounded-lg px-3 py-2 text-gray-700 transition hover:bg-gray-100/70 hover:text-gray-900">
+              Home
+            </a>
+          </li>
+
+          <!-- Categories -->
+          <li>
+            <button id="cat-button"
+              class="rounded-lg px-3 py-2 text-gray-700 transition hover:bg-gray-100/70 hover:text-gray-900 flex items-center gap-1">
+              Categories
+              <svg xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4 mt-1 text-gray-500 transition"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </li>
+
+          <li><a href="/blog"
+              class="rounded-lg px-3 py-2 text-gray-700 transition hover:bg-gray-100/70 hover:text-gray-900">Blog</a></li>
+
+          <li><a href="/about"
+              class="rounded-lg px-3 py-2 text-gray-700 transition hover:bg-gray-100/70 hover:text-gray-900">About</a></li>
+
+          <li><a href="/contact"
+              class="rounded-lg px-3 py-2 text-gray-700 transition hover:bg-gray-100/70 hover:text-gray-900">Contact</a></li>
+        </ul>
+
+        <!-- Auth Buttons -->
+        <ul class="flex justify-start md:justify-end gap-2 mt-3 md:mt-0 md:pl-3">
+          <% if (currentUser && currentUser.role==="user" ) { %>
+          <div class="flex gap-3">
+            <a href="/profile"
+              class="rounded-full bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700">Profile</a>
+            <a href="/logOut"
+              class="rounded-full border border-gray-200/70 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50">Logout</a>
+          </div>
+          <% } else { %>
+          <div class="flex gap-3">
+            <a href="./signup"
+              class="rounded-full border border-gray-200/70 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50">Register</a>
+            <a href="/login"
+              class="rounded-full bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700">Login</a>
+          </div>
+          <% } %>
+        </ul>
+
+      </nav>
+    </div>
+
+    <!-- 🔥 MEGA DROPDOWN (NOW OUTSIDE LI) -->
+    <div id="cat-item"
+      class="hidden absolute left-0 top-full w-full bg-white shadow-xl border-t border-gray-200 p-8 z-40">
+
+      <div class="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-8">
+        <% if (category && category.length) { %>
+        <% category.forEach(cat => { %>
+        <div>
+          <h1 class="font-semibold text-base text-gray-900 border-b border-gray-200 pb-2">
+            <%= cat.name %>
+          </h1>
+
+          <% if (cat.topics && cat.topics.length) { %>
+          <% cat.topics.forEach(topic => { %>
+          <a href="/topics/<%= topic.slug %>"
+            class="block text-gray-600 hover:text-gray-900 text-sm transition mt-2">
+            <%= topic.title %>
+          </a>
+          <% }) %>
+          <% } %>
+        </div>
+        <% }) %>
+        <% } %>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+</body>
+
+</html>
