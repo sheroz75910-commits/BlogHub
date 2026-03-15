@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+    <%= title%>
+  </title>
+      <link rel="stylesheet" href="/tailwind-build.css">
+      <style>
+        /* Only remove list markers inside the main content area to avoid affecting header/nav */
+        main ul,
+        main ol,
+        main li,
+        main .list-disc,
+        main .list-decimal,
+        main .list-inside,
+        main .list-outside {
+          list-style: none !important;
+          padding-left: 0 !important;
+          margin-left: 0 !important;
+        }
+
+        /* Hide marker pseudo-element where supported inside main */
+        main li::marker {
+          content: '' !important;
+          color: transparent !important;
+          font-size: 0 !important;
+        }
+      </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 antialiased">
+  <%- include('../../partial/sidebar.ejs')%>
+
+    <main>
+      <%- body %>
+    </main>
+
+ 
+
+    <script src="/Dashbord/responsiveNavbar.js" defer></script>
+    
+    <% if (title==="Dashboard" ) { %>
+      <script src="/user/loading.js" defer></script>
+      <!-- <script src="/vendor/chart.js/dist/chart.umd.js"></script> -->
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="/Dashbord/my-Dashbord.js" defer></script>
+      <% } %>
+      <% if (title==="Withdraw" ) { %>
+        <script src="/user/loading.js" defer></script>
+        <script src="/Dashbord/Withdraw.js" defer></script>
+        <% } %>
+        <% if (title==="postsAnalytics" ) { %>
+          <script src="/user/loading.js" defer></script>
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          <script src="/Dashbord/postAnalytics.js" defer></script>
+          <% } %>
+          
+          
+          <% if (title==="Artical" ) { %>
+            <script src="/user/loading.js" defer></script>
+        <script src="/Dashbord/article.js" defer></script>
+        <% } %>
+        
+
+</body>
+
+</html>

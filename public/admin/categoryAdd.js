@@ -1,91 +1,94 @@
-document.addEventListener("DOMContentLoaded", () => {
+const addTopic = document.getElementById("addTopic");
+const topicsWrapper = document.getElementById("topicsWrapper");
 
-    let showGroup = window.showGroup || [];
-    console.log("showGroup", showGroup);
+let topicIndex = 0;
 
-    let topicIndex = 0;
+// Read RPM groups from data attribute
+const rpmGroups = JSON.parse(topicsWrapper.dataset.rpmGroups || "[]");
 
-    const addTopicBtn = document.getElementById("addTopic");
-    const topicsWrapper = document.getElementById("topicsWrapper");
+addTopic.addEventListener("click", () => {
 
-    addTopicBtn.addEventListener("click", addTopic);
+    let options = "";
 
-    // Create the first topic row automatically
-    addTopic();
+    rpmGroups.forEach(group => {
+        options += `
+            <option value="${group._id}">
+                ${group.name} 
+            </option>
+        `;
+    });
 
-    function addTopic() {
-
-        // Build RPM group options dynamically
-        let optionsHTML = `<option value="" disabled selected>Select the group</option>`;
-        if (showGroup.length > 0) {
-            showGroup.forEach(group => {
-                optionsHTML += `<option value="${group._id}">${group.name}</option>`;
-            });
-        } else {
-            optionsHTML += `<option>No data found</option>`;
-        }
-
-        const topicHTML = `
+    const topicHTML = `
         <div class="topic-row border p-4 rounded-lg bg-gray-50 space-y-3">
             
             <div>
                 <label class="block text-sm font-medium">Topic Title</label>
                 <input type="text" 
-                       name="topics[${topicIndex}][title]" 
-                       placeholder="Personal Finance" 
-                       required
-                       class="title w-full border px-3 py-2 rounded" />
+                    name="topics[${topicIndex}][title]" 
+                    placeholder="Personal Finance"
+                    required
+                    class="title w-full border px-3 py-2 rounded" />
             </div>
 
             <div>
                 <label class="block text-sm font-medium">Slug</label>
                 <input type="text" 
-                       name="topics[${topicIndex}][slug]" 
-                       placeholder="personal-finance" 
-                       required
-                       class="slug w-full border px-3 py-2 rounded" />
+                    name="topics[${topicIndex}][slug]" 
+                    placeholder="personal-finance"
+                    required
+                    class="slug w-full border px-3 py-2 rounded" />
             </div>
 
             <div>
-                <label class="block text-sm font-medium">RPM Group</label>
-                <select name="topics[${topicIndex}][rpm_group_id]" 
-                        required 
-                        class="w-full border px-3 py-2 rounded">
-                    ${optionsHTML}
+                <label class="block  text-sm font-medium">RPM Group</label>
+                <select 
+                    name="topics[${topicIndex}][rpm_group_id]" 
+                    required
+                    class="w-full  border px-3 py-2 rounded">
+                    ${options}
                 </select>
             </div>
 
             <button type="button" 
-                    class="removeTopic text-red-600 text-sm font-medium">
+                class="removeTopic text-red-600 text-sm font-medium">
                 Remove Topic
             </button>
 
         </div>
-        `;
+    `;
 
-        topicsWrapper.insertAdjacentHTML("beforeend", topicHTML);
-        topicIndex++;
+    topicsWrapper.insertAdjacentHTML("beforeend", topicHTML);
+
+    topicIndex++;
+});
+
+
+// Remove topic
+topicsWrapper.addEventListener("click", (e) => {
+    const removeBtn = e.target.closest(".removeTopic");
+
+    if (removeBtn) {
+        removeBtn.closest(".topic-row").remove();
     }
+});
 
-    // Remove topic (delegation)
-    topicsWrapper.addEventListener("click", (e) => {
-        if (e.target.classList.contains("removeTopic")) {
-            e.target.closest(".topic-row").remove();
-        }
-    });
 
-    // Auto-generate slug
-    topicsWrapper.addEventListener("input", (e) => {
-        if (e.target.classList.contains("title")) {
-            const inputTitle = e.target;
-            const inputSlug = inputTitle.closest(".topic-row").querySelector(".slug");
-            inputSlug.value = inputTitle.value
-                .toLowerCase()
-                .trim()
-                .replace(/[^\w\s-]/g, "")
-                .replace(/\s+/g, "-")
-                .replace(/--+/g, "-");
-        }
-    });
+// Auto slug generator
+topicsWrapper.addEventListener("input", (e) => {
+
+    if (e.target.classList.contains("title")) {
+
+        const titleInput = e.target;
+        const slugInput = titleInput
+            .closest(".topic-row")
+            .querySelector(".slug");
+
+        slugInput.value = titleInput.value
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, "")
+            .replace(/\s+/g, "-")
+            .replace(/--+/g, "-");
+    }
 
 });

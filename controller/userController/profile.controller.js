@@ -69,7 +69,7 @@ const createORUpdateProfile = asyncHandler(async (req, res) => {
 
 
 
-      return res.render("Profile", { title: "profile", page: "profile", profile });
+      return res.render("Profile", {showLayout : true, title: "profile", page: "profile", profile });
    }
 
    //  Update profile
@@ -91,7 +91,7 @@ const createORUpdateProfile = asyncHandler(async (req, res) => {
    req.flash("success", "you profile is successfully Create");
    //   return res.redirect("/Profile");
 
-   return res.render("Profile", { title: "profile", page: "profile", profile });
+   return res.render("Profile", {showLayout : true, title: "profile", page: "profile", profile });
 });
 
 
@@ -101,10 +101,10 @@ const getProfileForUpdate = asyncHandler(async (req, res) => {
    const profile = await Profile.findOne({ User: useId})
    // const user = await User.findOne({useId})
    if (req.query.edit === "true") {
-      return res.render("edit-profile", { layout: false, title: "Edit Profile",page : "Edit profile", profile });
+      return res.render("edit-profile", {layout: false, title: "Edit Profile",page : "Edit profile", profile });
    }
    if (profile) {
-      res.render("Profile", { title: "Profile", page : "Profile", profile })
+      res.render("Profile", {showLayout : true, title: "Profile", page : "Profile", profile })
    } else {
       res.render("edit-profile", {
          layout: false,

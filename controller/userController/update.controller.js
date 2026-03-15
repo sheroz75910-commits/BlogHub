@@ -12,6 +12,7 @@ const updateController = asyncHandler(async(req, res)=>{
 
 
     res.render("footer/Platform/updates", {
+        showLayout : true,
         title : "updates",
         page : "updates",
         updates : siteUpdate,

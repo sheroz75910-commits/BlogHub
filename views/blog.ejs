@@ -1,0 +1,191 @@
+<!-- Main Container -->
+<div class="flex flex-col md:flex-row justify-center max-w-7xl mx-auto py-12 gap-6 px-4">
+
+  <!-- Sidebar -->
+  <div class="w-full md:w-80 md:shrink-0">
+    <!-- Search Bar -->
+    <form class="w-full mb-4 sticky md:static top-0 bg-white z-10" action="/blog" method="get">
+      <div class="bg-white">
+        <input class="border p-2 w-full focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-md" type="text"
+          id="search" name="Search" placeholder="Search" value="<%= searchQuery %>" />
+        <input type="hidden" name="page" value="<%= currentPage %>" />
+        <hr class="border-t-2 border-gray-900 mt-2">
+      </div>
+    </form>
+
+    <!--  Sidebar Search Results (Desktop Only) -->
+    <div class="hidden md:block rounded-lg p-5 text-gray-500 shadow-lg overflow-y-auto max-h-150">
+      <% if (SideAllArtical && SideAllArtical.length> 0) { %>
+        <% SideAllArtical.forEach(Artical=> { %>
+          <a href="/blog/blog-contant/<%= Artical._id %>"
+            class="flex cursor-pointer items-center shadow mb-3 gap-4 hover:bg-gray-50 p-2 rounded-lg transition">
+            <img src="<%= Artical.featured_image %>" alt="app" loading="lazy" alt="Description"
+              class="w-12 h-12 rounded-full object-cover">
+            <div>
+              <h1 class="font-bold text-sm md:text-base">
+                <%= Artical.title %>
+              </h1>
+              <p class="text-gray-600 text-sm mt-1">
+                <%= Artical.username ? Artical.username.username : "Unknown Author" %>
+              </p>
+              <p class="text-xs md:text-sm line-clamp-2">
+                <%= Artical.short_description %>
+              </p>
+            </div>
+          </a>
+          <% }) %>
+            <% } %>
+    </div>
+  </div>
+
+  <!--  Blog Posts Section (Scrollable) -->
+  <div class="flex-1 relative">
+
+    <!-- Scrollable container -->
+    <div class="overflow-y-auto max-h-[80vh] pr-2">
+      <!--  Mobile: Search results -->
+      <div class="<%= (searchQuery && SideAllArtical.length > 0) ? 'block md:hidden' : 'hidden' %>">
+        <% if (SideAllArtical && SideAllArtical.length> 0) { %>
+          <% SideAllArtical.forEach(Artical=> { %>
+            <div
+              class="bg-white p-4 rounded-xl shadow-lg flex flex-col sm:flex-row gap-4 mb-4 hover:shadow-xl transition">
+              <div class="shrink-0">
+                <img src="<%= Artical.featured_image %>" alt="app" loading="lazy" alt="Description"
+                  class="w-full sm:w-72 rounded-lg object-cover">
+              </div>
+              <div class="flex flex-col justify-between w-full">
+                <div>
+                  <h1 class="text-xl sm:text-2xl capitalize font-bold">
+                    <%= Artical.title %>
+                  </h1>
+                  <p class="text-gray-600 text-sm mt-1">
+                    <%= Artical.username ? Artical.username.username : "Unknown Author" %>
+                  </p>
+                  <p class="mt-3 text-gray-700 text-sm sm:text-base">
+                    <%= Artical.short_description %>
+                  </p>
+                </div>
+                <div class="flex justify-end mt-3">
+                  <a href="/blog/blog-contant/<%= Artical._id %>"
+                    class="bg-teal-500 px-4 py-2 sm:px-6 sm:py-3 text-white font-bold uppercase rounded-lg hover:bg-teal-600 transition">
+                    Read More
+                  </a>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+              <% } else { %>
+                <p class="text-center text-gray-500 mt-10 text-lg">No search results found.</p>
+                <% } %>
+      </div>
+
+      <!--  Desktop or normal blog posts -->
+      <div class="<%= (searchQuery && SideAllArtical.length > 0) ? 'hidden md:block' : 'block' %>">
+        <% if (allArtical && allArtical.length> 0) { %>
+          <% allArtical.forEach(Artical=> { %>
+            <div
+              class="bg-white p-4 rounded-xl shadow-lg flex flex-col sm:flex-row gap-4 mb-4 hover:shadow-xl transition">
+              <div class="shrink-0">
+                <img src="<%= Artical.featured_image %>" alt="app" class="w-full sm:w-72 rounded-lg object-cover">
+              </div>
+              <div class="flex flex-col justify-between w-full">
+                <div>
+                  <h1 class="text-xl sm:text-2xl capitalize font-bold">
+                    <%= Artical.title %>
+                  </h1>
+                  <p class="text-gray-600 text-sm mt-1">
+                    <%= Artical.username ? Artical.username.username : "Unknown Author" %>
+                  </p>
+                  <p class="mt-3 text-gray-700 text-sm sm:text-base">
+                    <%= Artical.short_description %>
+                  </p>
+                </div>
+
+                <div class="grid grid-cols-3 w-40 mt-3 text-gray-600 text-sm">
+                  <div class="flex items-center cursor-pointer gap-1">
+                    <img src="/assets/icons/thumbs-up-regular-full.svg" loading="lazy" alt="Description"
+                      class="w-5 h-5">
+                    <span>
+                      <%= Artical.totalLikes %>
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <img src="/assets/icons/eye-regular-full.svg" loading="lazy" alt="Description" class="w-5 h-5">
+                    <span>
+                      <%= Artical.totalViews%>
+                    </span>
+                  </div>
+                  <div class="flex items-center cursor-pointer gap-1">
+                    <img src="/assets/icons/share-nodes-solid-full.svg" loading="lazy" alt="Description"
+                      class="w-5 h-5">
+                    <span>
+                      <%= Artical.totalShares%>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="flex justify-end mt-3">
+                  <a href="/blog/blog-contant/<%= Artical._id %>"
+                    class="read-more-btn  bg-teal-500 px-4 py-2 sm:px-6 sm:py-3 text-white font-bold uppercase rounded-lg hover:bg-teal-600 transition"
+                    data-id="<%= Artical._id %>">
+                    Read More
+                  </a>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+              <% } else { %>
+                <p class="text-center text-gray-500 mt-10 text-lg">No articles found.</p>
+                <% } %>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex justify-center mt-10 space-x-2 flex-wrap">
+        <!-- Previous Page -->
+        <% if (currentPage> 1) { %>
+          <a href="<%= topicSlug 
+    ? '/topics/' + topicSlug + '?page=' + (currentPage - 1)
+    : '/blog/?page=' + (currentPage - 1) + (searchQuery ? '&Search=' + encodeURIComponent(searchQuery) : '') %>"
+            class="cursor-pointer px-3 py-2 bg-teal-500 text-gray-700 rounded-lg hover:bg-teal-700 transition">
+            Previous
+          </a>
+
+          <% } %>
+
+            <% const page=Number(currentPage); %>
+
+              <% for(let i=1; i <=totalPages; i++){ %>
+
+                <% if(i <=3 || i> totalPages - 3){ %>
+
+                  <a href="?page=<%= i %>" class="px-3 py-1 border rounded-md
+       <%= i === page ? 'bg-teal-500 text-white border-teal-600' : 'hover:bg-gray-100' %>">
+                    <%= i %>
+                  </a>
+
+                  <% } else if(i===4){ %>
+
+                    <span class="px-2 text-gray-500">...</span>
+
+                    <% } %>
+
+                      <% } %>
+
+
+
+                        <!-- Next Page -->
+                        <% if (currentPage < totalPages) { %>
+                          <a href="<%= topicSlug 
+    ? '/topics/' + topicSlug + '?page=' + (currentPage + 1)
+    : '/blog/?page=' + (currentPage + 1) + (searchQuery ? '&Search=' + encodeURIComponent(searchQuery) : '') %>"
+                            class="cursor-pointer px-3 py-2 bg-teal-500 text-gray-700 rounded-lg hover:bg-teal-700 transition">
+                            Next
+                          </a>
+
+
+                          <% } %>
+
+      </div>
+    </div>
+  </div>
+</div>

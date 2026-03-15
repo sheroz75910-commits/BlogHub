@@ -1,0 +1,34 @@
+<main class="md:ml-64 flex-1 p-6">
+    <h1 class="text-2xl font-semibold mb-5">Admin Settings</h1>
+
+    <form action="/api/setting/submit" method="post" class="bg-white m-auto p-6 rounded shadow w-full max-w-lg">
+        <div class="password-btn block relative mb-3">
+            <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
+            <input type="password" id="password" name="password" required
+                class="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
+            <span class="absolute right-3 w-5 top-10">
+                <img src="/assets/icons/eye-slash-solid-full.svg" class="toggle-password cursor-pointer" alt="">
+            </span>
+        </div>
+        <div class="password-btn block relative mb-3">
+            <label for="password" class="block text-sm font-medium text-slate-700">New Password</label>
+            <input type="password" id="password" name="Newpassword" required
+                class="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
+            <span class="absolute right-3 w-5 top-10">
+                <img src="/assets/icons/eye-slash-solid-full.svg" class="toggle-password cursor-pointer" alt="">
+            </span>
+        </div>
+
+        <div class="password-btn block relative mb-3">
+            <label for="password" class="block text-sm font-medium text-slate-700">Confirm Password</label>
+            <input type="password" id="password" name="Confirmpassword" required
+                class="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
+            <span class="absolute right-3 w-5 top-10">
+                <img src="/assets/icons/eye-slash-solid-full.svg" class="toggle-password cursor-pointer" alt="">
+            </span>
+        </div>
+
+        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded mt-3">Update</button>
+    </form  >
+
+</main>

@@ -1,0 +1,96 @@
+<main class="md:ml-64 flex-1 p-6">
+
+        <!-- PAGE TITLE -->
+        <h1 class="text-3xl font-bold mb-6">Users Management</h1>
+        
+        <!-- STAT CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+            
+            <!-- Total Users -->
+            <div class="bg-white p-5 rounded-lg shadow hover:shadow-md transition">
+                <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">👤 Users</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between border-b pb-2">
+                        <p>Total Users</p>
+                        <span class="font-bold"><%= totalProfiles%></span>
+                    </div>
+                    <div class="flex justify-between border-b pb-2">
+                        <p>monthly Users</p>
+                        <span class="font-bold"><%= MonthlyProfiles%></span>
+                    </div>
+                     <div class="flex justify-between border-b pb-2">
+                        <p>New Today</p>
+                        <span class="font-bold"><%= dayProfile%></span>
+                    </div>
+                    <div class="flex justify-between border-b pb-2">
+                        <p>Active Users</p>
+                        <span class="font-bold"><%= activeUser%></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <p>Banned Users</p>
+                        <span class="font-bold"><%= bandUser%></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Users by Role -->
+            <div class="bg-white p-5 rounded-lg shadow hover:shadow-md transition">
+                <h3 class="text-lg font-semibold mb-3">Roles</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between border-b pb-2">
+                        <p>Admins</p>
+                        <span class="font-bold"><%= admin%></span>
+                    </div>
+                    <div class="flex justify-between border-b pb-2">
+                        <p>Vendors</p>
+                        <span class="font-bold">120</span>
+                    </div>
+                    <div class="flex justify-between border-b pb-2">
+                        <p>Users</p>
+                        <span class="font-bold"><%= user%></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Active Today -->
+            <div class="bg-white p-5 rounded-lg shadow hover:shadow-md transition">
+                <h3 class="text-lg font-semibold mb-3">Activity</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between border-b pb-2">
+                        <p>Logged in Today</p>
+                        <span class="font-bold"><%= TodayLogin%></span>
+                    </div>
+                    <div class="flex justify-between border-b pb-2">
+                        <p>New Signups</p>
+                        <span class="font-bold"><%= newSignups%></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <p>Inactive >30 days</p>
+                        <span class="font-bold"><%= greaterThenThirty%></span>
+                    </div>
+                </div>
+            </div>
+            
+
+        </div>
+        
+        <!-- ACTIVE USERS CHART -->
+        <section class="bg-white p-6 rounded-xl shadow mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Active Users Trend</h2>
+                <select id="selectRange" class="border border-gray-300 px-3 py-2 rounded">
+                        <option value="7">Last 7 Days</option>
+                        <option value="15">Last 15 Days</option>
+                        <option value="30">Last 1 Month</option>
+                        <option value="90">Last 3 Months</option>
+                        <option value="180">Last 6 Months</option>
+                        <option value="365">1 Year</option>
+                    </select>
+            </div>
+            <div id="Chart" class="bg-gray-50 h-90 flex items-center justify-center rounded">
+                  <canvas id="chartTrend" width="600" height="400"></canvas>
+
+                </div>
+        </section>
+        
+    </main>

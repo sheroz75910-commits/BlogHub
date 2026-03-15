@@ -18,8 +18,10 @@ const ArticleList = asyncHandler(async(req, res)=>{
     
 
     return res.render("ArticleList", {
-        title : "Articles in"+ cate,
-        page : "ArticleList",
+        showLayout : true,
+        page : "Articles in"+ cate,
+        // title : "Articles in"+ cate,
+        title : "ArticleList",
         // layout : false,
         allArtical : article,
         cate

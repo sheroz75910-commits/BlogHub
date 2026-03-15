@@ -6,11 +6,10 @@ import ApiError from "../../utils/ApiError.js";
 const getAddCaategoryPage = asyncHandler(async (req, res) => {
 
       const showGroup = await RPMGroup.find().lean()
-    console.log("showGroup", showGroup);
-
+    // console.log("showGroup req.showGroup", req.showGroup);
     res.render('Admin.Dashbord/categoryadd', {
         title: 'admin-categoryadd',
-        showGroup : req.showGroup
+        showGroup 
     })
 })
 
@@ -24,7 +23,8 @@ const groutRpm = asyncHandler(async (req, res, next) => {
     console.log("showGroup", showGroup);
 
     req.showGroup = showGroup
-
+  console.log("req.showGroup", req.showGroup);
+  
     // res.json(showGroup)
 
 

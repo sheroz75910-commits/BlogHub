@@ -118,7 +118,9 @@ const submitSingupData = asyncHandler(async (req, res) => {
 
     }
     req.session.Email = userSingup.Email;
-    console.log("this is after email");
+    console.log("this is in session",  req.session );
+    console.log("this is in session",  req.session.Email );
+
     
     req.flash("success", "Signup successful! OTP sent to your email.");
     console.log("this is befor redirect");
@@ -199,7 +201,7 @@ const submitLoginData = asyncHandler(async (req, res) => {
     res.cookie("refreshToken", refreshToken, refreshTokenOption)
 
     req.flash("success", "login successfully");
-    return res.redirect("/home")
+    return res.redirect("/Profile")
 
 
 })

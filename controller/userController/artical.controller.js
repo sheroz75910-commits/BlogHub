@@ -178,8 +178,9 @@ const getArticales = asyncHandler(async (req, res) => {
   const totalPages = Math.ceil(totalArticals / limit) || 1;
 
   res.render("blog", {
+    showLayout : true,
     title: "Blog",
-    page : "Blog",
+    // page : "Blog",
     allArtical,
     currentPage: page,
     searchQuery: Topic || "",
@@ -253,6 +254,7 @@ const getSearchAndRandomArticals = asyncHandler(async (req, res) => {
   }
 
   res.render("blog", {
+       showLayout : true,
     title: Search ? `${Search}` : "Blogs",
     page : "Blogs",
     SideAllArtical,

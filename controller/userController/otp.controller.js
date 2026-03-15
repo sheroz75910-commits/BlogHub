@@ -7,10 +7,14 @@ import crypto from "crypto";
 
 const otpVerify = asyncHandler(async (req, res) => {
 console.log("this is for the otp controller");
+console.log("session", req.session);
 
 
-    const otp = req.body.otp;
-    const Email = req.session.Email;
+const otp = req.body.otp;
+const Email = req.session.Email;
+
+console.log("this is for the otp ", otp);
+console.log("this is for the otp Email", Email );
 
     if (!otp || !Email) {
         req.flash("error", "Invalid request");

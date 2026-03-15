@@ -15,7 +15,7 @@ const withdrawRequestList = asyncHandler(async(req, res)=>{
       .select("amount status createdAt user")   // only needed fields
       .populate("user", "Username Email")
       .lean();
-    // console.log("withdrawList", withdrawList);
+    console.log("withdrawList", withdrawList);
     
       const result = withdrawList.map(w => ({
         _id : w._id,

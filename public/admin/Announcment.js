@@ -8,7 +8,8 @@
     const btn = document.getElementById("update")
     const updateForm = document.getElementById("updateForm")
 
-    btn.addEventListener("click",async ()=>{
+    btn.addEventListener("click",async (e)=>{
+   e.preventDefault()
          const Categories = category.value.trim()
 
           const textName = name.value.trim()
