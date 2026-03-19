@@ -19,14 +19,21 @@ const articalUpload = asyncHandler(async (req, res) => {
 
 console.log("category",category);
 
-
-
-  if (!content) {
-    throw new ApiError("content is required", 400);
-    
-    //  req.flash("error", "the conetnt length must be greater then 100")
-    //     return res.redirect("/");
+  if (!title || !tags || !short_description || !content || !publish_date || !meta_title || !meta_description || !category) {
+       req.flash("error", "All fields are required");
+        return res.redirect("/Artical");
   }
+  
+    
+
+
+
+  // if (!content) {
+  //   throw new ApiError("content is required", 400);
+    
+  //   //  req.flash("error", "the conetnt length must be greater then 100")
+  //   //     return res.redirect("/");
+  // }
 
   // Call OpenAI Moderation API
 
@@ -38,25 +45,31 @@ console.log("category",category);
   
 
   if (!profileCategories) {
-    return res.status(400).json({ success: false, message: "Profile categories not found" });
+       req.flash("success", "All fields are required");
+        return res.redirect("/Artical");
   }
 
   if (!profileCategories.category.includes(category)) {
-    return res.status(400).json({ success: false, message: "Selected category is not allowed for your profile" });
+     req.flash("error", "Selected category is not allowed for your profile");
+        return res.redirect("/Artical");
   }
 
   console.log("category", category);
 
-  const imageUrl = await uploadOnCloudinary(req.file?.path)
+  let imageUrl 
+ try {
+   imageUrl = await uploadOnCloudinary(req.file?.path)
+ } catch (error) {
+   req.flash("error", "the Image is required");
+        return res.redirect("/Artical");
+ }
 
-  if (!imageUrl) {
-    throw new ApiError("featured_image is required", 400);
-
-  }
+ 
 
   const profile = await Profile.findOne({ User: req.user._id });
   if (!profile) {
-    return res.status(400).json({ success: false, message: "Profile not found" });
+       req.flash("error", "Profile not found");
+        return res.redirect("/Artical");
   }
   //   const cate = await Category.find()
   // console.log("cate", cate);
@@ -75,22 +88,25 @@ console.log("category",category);
   console.log("this is Categories", categoryData );
 
   if (!categoryData?.length) {
-    throw new ApiError("Invalid category", 400);
+      req.flash("error", "Invalid category");
+        return res.redirect("/Artical");
   }
 
 
   const rpm_group_id = categoryData[0].rpm_group_id
-  console.log("this is rpm_group_id", rpm_group_id);
+  // console.log("this is rpm_group_id", rpm_group_id);
   
-  if (!rpm_group_id) {
-    return res.status(400).json({ success: false, message: "RPM group not found for category" });
-  }
+  // if (!rpm_group_id) { 
+  //   req.flash("error", "RPM not found for this category");
+  //       return res.redirect("/Artical");
+  // }
 
   const RPM = await RPMGroup.findById(rpm_group_id).select("rate_per_1000")
   console.log("RPM", RPM);
 
   if (!RPM) {
-    return res.status(400).json({ success: false, message: "RPM data not found" });
+  req.flash("error", "RPM not found for this category");
+        return res.redirect("/Artical");
 
   }
 
@@ -110,48 +126,37 @@ console.log("category",category);
 // }
 
 
-  const createArtical = await Articals.create({
-    User: req.user._id,
-    title,
-    featured_image: imageUrl.secure_url,
-    tags,
-    short_description,
-    content,
-    publish_date,
-    username: profile._id,
-    category,
-    rpm: RPM.rate_per_1000,
-    // share,
-    estimatedEarningMills: 0,
-    meta_description,
-    meta_title,
-    // author: profile._id,
-  })
+  try {
+        await Articals.create({
+      User: req.user._id,
+      title,
+      featured_image: imageUrl.secure_url,
+      tags,
+      short_description,
+      content,
+      publish_date,
+      username: profile._id,
+      category,
+      rpm: RPM.rate_per_1000,
+      // share,
+      estimatedEarningMills: 0,
+      meta_description,
+      meta_title,
+      // author: profile._id,
+    })
+
+  } catch (error) {
+     req.flash("error", "Article faild to Upload");
+        return res.redirect("/Artical");
+  }
 
   console.log("this artical befor populateartical", createArtical);
 
 
-  const populateArtical = await Articals.findById(createArtical._id).populate("username", "username")
 
-  // console.log("this artical after populateartical", createArtical);
+    req.flash("success", "Article Upload Successfull");
+    return res.redirect("/profile/Dashbord/Artical");
 
-
-
-
-  if (!createArtical) {
-    return res.status(500).json({ success: false, message: "Failed to create article" });
-
-  }
-
-  // moderation is performed synchronously via middleware/openai client
-
-  
-     res.redirect("/profile/Dashbord/Artical");
-  // return res.json({ success: true, message: "Blog uploaded successfully" });
-
-  // return res
-  //   .status(201)
-  //   .json(new ApiResponse(200, createArtical, "the Artical is create successfully"))
 
 })
 

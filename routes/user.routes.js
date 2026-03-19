@@ -89,7 +89,7 @@ router.get('/profile/Dashbord/EarningPage',verifijwt,userEarning)
 router.get('/profile/Dashbord/my-Dashboard', verifijwt, userDashboard)
 router.get('/profile/Dashbord/my-Dashboard/data', verifijwt, getDashbordChartData)
 // router.get('/profile/Dashbord/my-Dashboard', likedBlogs)
-router.get('/profile/Dashbord/Withdraw',verifijwt, (req, res) => { res.render('Dashbord/Withdraw', { title: 'Withdraw-Page' }) })
+router.get('/profile/Dashbord/Withdraw',verifijwt, (req, res) => { res.render('Dashbord/Withdraw', {title: 'Withdraw' }) })
 router.post('/profile/Dashbord/Withdraw/submit',verifijwt, withdrawController)
 // router.get('/profile/Dashbord/postsAnalytics', postInTable);
 

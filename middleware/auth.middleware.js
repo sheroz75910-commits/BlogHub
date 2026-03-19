@@ -16,7 +16,7 @@ const verifijwt = asyncHandler(async (req, res, next) => {
 
     const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     const user = await User.findById(decodedToken.id).select('-password -refreshToken');
-             console.log("user", user);
+            //  console.log("user", user);
              
     if (!user) {
       if (isApiRequest) return res.status(401).json({ success: false, message: "Not authenticated" });

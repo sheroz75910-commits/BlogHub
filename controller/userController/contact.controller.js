@@ -33,19 +33,29 @@ const contactController = asyncHandler(async (req, res) => {
     ipAddress
   })
 
- 
+
 
   // await saveMassage.save()
 
 
-  await sendMail({
-    to: process.env.EMAIL_USER, // admin
-    subject: `New message from ${name}`,
-    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-    html: `<p><b>Name:</b> ${name}</p><p><b>Email:</b> ${email}</p><p>${message}</p>`
-  });
+  try {
+    await sendMail({
+      to: process.env.EMAIL_USER, // admin
+      subject: `New message from ${name}`,
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+      html: `<p><b>Name:</b> ${name}</p><p><b>Email:</b> ${email}</p><p>${message}</p>`
+    });
 
-  return res.render("contact", { title: "contact", page : "contact"})
+    req.flash("success", "Mail send successfully");
+    return res.redirect("/contact");
+    // return res.redirect("/contact")
+
+  } catch (error) {
+    req.flash("error", "something went wrong");
+    return res.redirect("/contact");
+  }
+
+  // return res.render("contact", {showLayout: false, title: "contact", page : "contact"})
 
 });
 
@@ -64,7 +74,7 @@ const sendOtpMail = asyncHandler(async (req, res) => {
 
 
   const otpCode = await account.generateOtpCode();
- 
+
 
   await account.save({ validateBeforeSave: false })
 

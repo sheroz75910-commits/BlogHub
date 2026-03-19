@@ -42,9 +42,9 @@
  
 
     <script src="/Dashbord/responsiveNavbar.js" defer></script>
+    <script src="/user/loading.js" defer></script>
     
     <% if (title==="Dashboard" ) { %>
-      <script src="/user/loading.js" defer></script>
       <!-- <script src="/vendor/chart.js/dist/chart.umd.js"></script> -->
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script src="/Dashbord/my-Dashbord.js" defer></script>
@@ -52,6 +52,8 @@
       <% if (title==="Withdraw" ) { %>
         <script src="/user/loading.js" defer></script>
         <script src="/Dashbord/Withdraw.js" defer></script>
+        <script src="/user/massageErrorSuccess.js" defer></script>
+
         <% } %>
         <% if (title==="postsAnalytics" ) { %>
           <script src="/user/loading.js" defer></script>
@@ -62,6 +64,7 @@
           
           <% if (title==="Artical" ) { %>
             <script src="/user/loading.js" defer></script>
+               <script src="/user/massageErrorSuccess.js" defer></script>
         <script src="/Dashbord/article.js" defer></script>
         <% } %>
         

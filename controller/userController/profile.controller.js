@@ -30,27 +30,34 @@ const createORUpdateProfile = asyncHandler(async (req, res) => {
    let imageUrl = null;
 
    //  Only upload if a file exists
-   if (req.file && req.file.path) {
-      imageUrl = await uploadOnCloudinary(req.file.path);
-   } else if (!profile) {
-      req.flash("error", "you did not upload the Image");
-      return res.redirect("/profile?edit=true");
 
-   }
+    if (req.file && req.file.path) {
+     try {
+       imageUrl = await uploadOnCloudinary(req.file.path);
+     } catch (error) {
+          req.flash("error", "Image upload failed");
+             return res.redirect("/profile?edit=true");
+     }
+     
+   } 
+
+//   else if (!profile) {
+//       req.flash("error", "you did not upload the Image");
+//       return res.redirect("/profile?edit=true");
+
+//    }
 
    // Validate AFTER uploading only if file exists
    const result = validationResult(req);
    if (!result.isEmpty()) {
-      const errorMessage = result.array().map(errors => ({
-         field: errors.param,
-         msg: errors.msg
-      }));
-      console.log("errorMessage", errorMessage);
-
-      throw new ApiError("validation failed", 400, errorMessage);
+   result.array().forEach(err => req.flash("error", err.msg))
+        return res.redirect("/profile?edit=true");
    }
 
-   if (!profile) {
+console.log("profile is going to create");
+
+
+if (!profile) {
       //  Create new profile
       profile = await Profile.create({
          User: req.user._id,
@@ -65,33 +72,41 @@ const createORUpdateProfile = asyncHandler(async (req, res) => {
          category,
          profile_Image: imageUrl?.secure_url || ""
       });
-
-
-
-
-      return res.render("Profile", {showLayout : true, title: "profile", page: "profile", profile });
+      
+      
+         req.flash("success", "Your Profile create Successfully");
+             return res.redirect("/profile");
+            //  return res.redirect("/profile?edit=true");
+    
+      // return res.render("Profile", {showLayout : true, title: "profile", page: "profile", profile });
    }
-
-   //  Update profile
-   const updateprofile = {
-      full_name,
-      about,
+      console.log("profile is now created");
+      
+      //  Update profile
+      const updateprofile = {
+         full_name,
+         about,
       phone,
       location,
       profile_Image: imageUrl?.secure_url || profile.profile_Image, // fallback to old image
    };
 
 
-
+   console.log("profile is going to update");
+try {
    profile = await Profile.findOneAndUpdate(
       { User: req.user._id },
       { $set: updateprofile },
-      { new: true }
-   );
-   req.flash("success", "you profile is successfully Create");
-   //   return res.redirect("/Profile");
+         { new: true }
+      );
+   } catch (error) {
+     req.flash("success", "you profile is successfully Update");
+     return res.redirect("/profile");
+   }
+   
+   console.log("profile is now updated");
+   return res.redirect("/profile");
 
-   return res.render("Profile", {showLayout : true, title: "profile", page: "profile", profile });
 });
 
 

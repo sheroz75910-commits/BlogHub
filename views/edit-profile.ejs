@@ -11,6 +11,11 @@
 </head>
 
 <body>
+
+
+     <%- include("../partial/Flash_response.ejs") %>
+
+
     <div class=" max-w-4xl mx-auto bg-white shadow-md rounded-lg mt-10 p-8">
         <h1 class="capitalize text-black text-5xl p-3 text-center mb-3 font-bold"><%= profile? "Update Your Profile" : "Create Your Profile"%></h1>
         <form action="/profile" method="POST" enctype="multipart/form-data"
@@ -133,7 +138,10 @@
     </div>
 
 
- <script src="/user/editProfile.js" defer></script>
+     <script src="/user/loading.js" defer></script>
+       <script src="/user/massageErrorSuccess.js" defer></script>
+        
+      <script src="/user/editProfile.js" defer></script>
 
 
 </body>

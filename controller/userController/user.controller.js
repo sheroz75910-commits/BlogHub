@@ -101,6 +101,9 @@ const submitSingupData = asyncHandler(async (req, res) => {
     }
 
     const otpCode = await userSingup.generateOtpCode()
+
+
+
     await userSingup.save({ validateBeforeSave: false });
 
 
@@ -113,19 +116,20 @@ const submitSingupData = asyncHandler(async (req, res) => {
             html: `<p>Your OTP code is <b>${otpCode}</b>. It will expire in 5 minutes.</p>`,
         });
     } catch (err) {
-        console.error("Failed to send OTP email:", err.message);
+        req.flash("error", "something went wrong");
+        return res.redirect("/signup");
         // optional: log in DB or flag user
-
     }
+
+
+    
     req.session.Email = userSingup.Email;
     console.log("this is in session",  req.session );
     console.log("this is in session",  req.session.Email );
 
     
     req.flash("success", "Signup successful! OTP sent to your email.");
-    console.log("this is befor redirect");
     return res.redirect('/otp');
-    console.log("this is after redirect");
 
 
 
@@ -158,7 +162,6 @@ const submitLoginData = asyncHandler(async (req, res) => {
     if (!existedUser) {
         req.flash("error", "Invalid Username or Email");
         return res.redirect('/login');
-
     }
 
 
@@ -201,7 +204,7 @@ const submitLoginData = asyncHandler(async (req, res) => {
     res.cookie("refreshToken", refreshToken, refreshTokenOption)
 
     req.flash("success", "login successfully");
-    return res.redirect("/Profile")
+    return res.redirect("/home")
 
 
 })
@@ -264,6 +267,9 @@ const submitForgetPassword = asyncHandler(async (req, res) => {
 
 const updatePassword = asyncHandler(async (req, res) => {
     const token = req.params.token || req.body.token;
+
+    console.log("token", token);
+    
     if (!token) {
         req.flash("error", "Please verify your email before reset Password.");
         return res.redirect("forgot-password");
@@ -321,8 +327,9 @@ const updatePassword = asyncHandler(async (req, res) => {
 
     res.cookie("accessToken", accessToken, accessTokenOption)
     res.cookie("refreshToken", refreshToken, refreshTokenOption)
-
-  return res.redirect('/');
+      req.flash("success", "you have successfully reset Password and now logging");
+        return res.redirect("/");
+//   return res.redirect('/');
 })
 
 const googlecontroller = asyncHandler(async (req, res) => {
@@ -370,8 +377,8 @@ const logOut = asyncHandler(async (req, res) => {
         secure: process.env.NODE_ENV === "production", // secure only in prod
         sameSite: "strict"
     });
-
-    res.redirect("/home");
+    req.flash("success", "Your are Logging Out Successfully");
+  return res.redirect("/home");
 });
 
 

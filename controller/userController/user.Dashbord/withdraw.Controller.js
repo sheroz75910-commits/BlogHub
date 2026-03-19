@@ -23,19 +23,26 @@ const withdrawController = asyncHandler(async (req, res) => {
         return res.redirect("/profile/Dashbord/Withdraw");
     }
 
-
+  const numaricAmount = Number(amount)
+  console.log("numaricAmount", numaricAmount);
+  
    
-   const withdrawAmountFromUser = DollerTomile(amount)
+    if (isNaN(numaricAmount) || numaricAmount <= 0) {
+        req.flash("error", "Invalid amount");
+        return res.redirect("/profile/dashboard/withdraw");
+    }
+
+
+   const withdrawAmountFromUser = DollerTomile(numaricAmount)
+
 
    console.log("withdraw", withdrawAmountFromUser);
    
 
+
+
    const withdrawLimiit = 10000
    
-
-
-   
-
     if (withdrawAmountFromUser < withdrawLimiit) {
         console.log("the amount should be greater then 10$");
         
@@ -43,75 +50,83 @@ const withdrawController = asyncHandler(async (req, res) => {
         return res.redirect("/profile/Dashbord/Withdraw");
     }
   
-    await withdraw.create({
-        user : userId,
-        amount : withdrawAmountFromUser,
-        accountDetails,
-        method
-    })
 
-    const user = await User.findOne({_id : userId}).select("balanceMills");
-
-     if (!user) {
-         req.flash("error", "something went wrong");
+      const user = await User.findById(userId).select("balanceMills");
+  console.log("user", user);
+  
+      if (!user) {
+         req.flash("error", "User not fount");
         return res.redirect("/profile/Dashbord/Withdraw");
-    }
+        
+      }
 
-    const balance = user.balanceMills;
-     console.log("user balance", user.balanceMills);
-     
-   
-    // const amountTowithdraw = amount * 1000;
-    const withdrawAmount = balance  - withdrawAmountFromUser;
+      if (user.balanceMills < withdrawAmountFromUser) {
+        
+       req.flash("error", "You have not Insufficient  Balance");
+        return res.redirect("/profile/Dashbord/Withdraw");
+      }
 
-    console.log("user withdrawAmount", withdrawAmount);
+
+     user.balanceMills -=withdrawAmountFromUser
+       await user.save();
+
+   try {
+     await withdraw.create({
+         user : userId,
+         amount : withdrawAmountFromUser,
+         accountDetails,
+         method
+     })
+   } catch (error) {
+
+      user.balanceMills +=withdrawAmountFromUser
+      await user.save()
+
+    req.flash("error", "Withdrawal failed, try again");
+        return res.redirect("/profile/dashboard/withdraw");
+   }
+    console.log("this is the end");
     
-    user.balanceMills = withdrawAmount;
-    await user.save()
-
-
      
-     
-     res.redirect("/profile/Dashbord/Withdraw");
-
-    // const userId = req.user._id
-    // console.log("userId", userId);
-
-
-    // const user = await User.find(userId).select("username")
+    req.flash("success", "Withdrawal request submitted successfully");
+    return res.redirect("/profile/dashboard/withdraw");     
+    })
     
-    // console.log("user from the withdrawController", user);
-
-
-    // if (!amount || !method || !accountDetails) {
-    //     req.flash("error", "something went wrong");
-    //     return res.redirect("/profile/Dashbord/Withdraw");
-
-    // }
-
-    // if (amount >= 10) {
-    //     req.flash("error", "the ammount should be greater then 10$!");
-    //     return res.redirect("/profile/Dashbord/Withdraw");
-    // }
-
-
-    // console.log("here i am going to create withdraw request");
-
-    // const withdrawData = await withdraw.create({
-    //     user: userId,
-    //     amount,
-    //     method,
-    //     accountDetails,
-    // })
-    // console.log("withdrawData", withdrawData);
-    // console.log("here i am going to create withdraw request");
-
-    // await User.findById(id, {})
-
-
-    // await withdrawData.save({validateBeforeSave : false})
-
-
-})
-
-export default withdrawController
+    export default withdrawController
+    
+        // const userId = req.user._id
+        // console.log("userId", userId);
+    
+    
+        // const user = await User.find(userId).select("username")
+        
+        // console.log("user from the withdrawController", user);
+    
+    
+        // if (!amount || !method || !accountDetails) {
+        //     req.flash("error", "something went wrong");
+        //     return res.redirect("/profile/Dashbord/Withdraw");
+    
+        // }
+    
+        // if (amount >= 10) {
+        //     req.flash("error", "the ammount should be greater then 10$!");
+        //     return res.redirect("/profile/Dashbord/Withdraw");
+        // }
+    
+    
+        // console.log("here i am going to create withdraw request");
+    
+        // const withdrawData = await withdraw.create({
+        //     user: userId,
+        //     amount,
+        //     method,
+        //     accountDetails,
+        // })
+        // console.log("withdrawData", withdrawData);
+        // console.log("here i am going to create withdraw request");
+    
+        // await User.findById(id, {})
+    
+    
+        // await withdrawData.save({validateBeforeSave : false})
