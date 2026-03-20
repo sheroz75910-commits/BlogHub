@@ -18,7 +18,9 @@ const userDashboard = asyncHandler(async (req, res) => {
   console.log("tvdyt3vyue che cue e e   userId", userId);
   
 
-  const profile = await Profile.findOne({ User: req.user._id });
+  const profile = await Profile.findOne({ User: userId });
+
+  if(!profile) return null;
   // all blogs
   const allPostedArtical = await Articals.countDocuments({ username: profile._id });
 
@@ -56,9 +58,7 @@ const userDashboard = asyncHandler(async (req, res) => {
 
 
   //    Total like of all blogs
-  const allLikes = await ArticleLike.countDocuments(
-    {user : userId}
-  );
+  const allLikes = await ArticleLike.countDocuments();
   
   console.log("allLikes", allLikes);
   
@@ -80,7 +80,8 @@ const userDashboard = asyncHandler(async (req, res) => {
   dayend.setHours(23, 59, 59, 999)
 
   const dayLikes = await ArticleLike.countDocuments({
-     user : userId,
+    //  user : userId,
+    
     createdAt :{$gte : dayStart, $lte : dayend}
   })
 
@@ -193,16 +194,13 @@ const dayKey = now.toISOString().slice(0, 10);   // "2026-01-20"
 const monthKey = dayKey.slice(0, 7);             // "2026-01"
 
 
-// const month = new Date().toDateString().split(0, 7)
+
 
 const views = await ArticleView.find({User : req.user._id})
 
 console.log("view", views);
 
-// console.log("totalViews monetized", views[0].monetized);
-// console.log("totalViews total", views[0].total);
-// console.log("monthViews", monthViews);
-// console.log("todayViews", todayViews);
+
 
 const totalViews = views.reduce((sum, view) => sum +(view?.monetized || 0), 0)
 const monthViews = views.reduce((sum, view)=> sum +(view?.monthly?.get(monthKey)?.monetized || 0), 0)
@@ -275,202 +273,6 @@ const daySharesArticle = await ArticleShare.aggregate([
 const totalShareArticals = totalShare[0]?.total || 0
 const monthlyShares = Shares[0]?.total || 0
 const dayShares = daySharesArticle[0]?.total || 0
-
-// const monthlyShares = await ArticleShare.;
-// const dayShares = await ArticleShare.countDocuments({createdAt :{$gte : StartdayDate, $lte : enddayDate}});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//   const now = new Date();
-// const todayStr = now.toDateString();
-// const monthStr = `${now.getFullYear()}-${now.getMonth() + 1}`;
-
-// if (!article.views.lastDay || article.views.lastDay.toDateString() !== todayStr) {
-//   article.views.today = 0;
-// }
-
-// if (!article.views.lastMonth || article.views.lastMonth !== monthStr) {
-//   article.views.thisMonth = 0;
-// }
-
-// article.views.total += 1;
-// article.views.today += 1;
-// article.views.thisMonth += 1;
-
-// article.views.lastDay = now;
-// article.views.lastMonth = monthStr;
-
-// await article.save();
-
-  
-
-
-  //   console.log("categoryState", categoryState);
-
-  // const Artical = await Articals.find().select("views");
-
-
-
-  // let totalViews = 0;
-
-  // Artical.forEach((artical) => {
-  //   totalViews += artical.views.length;
-  // });
-
-  // const totalArticalViews = await Articals.aggregate([
-  //   {$match :{username : profile._id}},
-  //   {$unwind : "$views"},
-  //   {
-  //     $group :{
-  //       _id : null, totalViews :{$sum : "$views.view"}
-  //     }
-  //   }
-
-  // ])
-
-  // console.log("dashbord totalArticalViews", totalArticalViews);
-  // const totalViews = totalArticalViews.length  ? totalArticalViews[0].totalViews : 0;
-
-
-
-  // const startMonthlyViews = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  // const endMonthlyViews = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 23, 59, 59, 999);
-
-  // let monthlyViews = await Articals.aggregate([
-  //   {$match : {username: profile._id}},
-  //   { $unwind: "$views" },
-  //   {
-  //     $match: {
-  //       "views.viewdAt": { $gte: startMonthlyViews, $lte: endMonthlyViews }
-  //     }
-  //   },
-  //   { $count: "monthlyViews" }
-  // ]);
-
-  // monthlyViews = monthlyViews.length > 0 ? monthlyViews[0].monthlyViews : 0;
-
-
-  //    const startMonthDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-  //   const  endMonthDay = new Date(new Date().getFullYear(), new Date().getMonth(), + 1, 23, 59, 59, 999)
-
-
-
-  // let monthlyViews = await Articals.aggregate([
-  //      {$unwind : "$views"},
-  //     {
-  //         $match : {
-  //             "views.viewdAt" : {$gte : startMonthDay, $lte : endMonthDay}
-  //         }
-  //     },
-  //     {$count : "monthlyViews"}
-  // ])
-
-  //   monthlyViews = monthlyViews.length > 0 ? monthlyViews[0].monthlyViews : 0;
-
-  // const startViewDay = new Date()
-  // startViewDay.setHours(0, 0, 0, 0);
-  // const endViewDay = new Date();
-  // endViewDay.setHours(23, 59, 59, 999)
-
-  // let dailyViews = await Articals.aggregate([
-  //    {$match : {username: profile._id}},
-  //   { $unwind: "$views" },
-  //   {
-  //     $match: {
-  //       "views.viewdAt": { $gte: startViewDay, $lte: endViewDay }
-  //     }
-  //   },
-  //   { $count: "dailyViews" }
-  // ])
-
-  // dailyViews = dailyViews.length > 0 ? dailyViews[0].dailyViews : 0;
-
-
-
-  /*****======== Section share Start ==========*****/
-
-
-  // const articals = await Articals.find({ username: profile._id }).select("shares");
-
-  // let totalShareArticals = 0;
-  // articals.forEach(artical => {
-  //   if (artical.shares) {
-  //     Object.values(artical.shares).forEach(share => {
-  //       totalShareArticals += share
-  //     })
-  //   }
-
-  // })
-
-  // console.log("totalShareArticals", totalShareArticals);
-
-  // Monthly shares
-  // const startMonthlyShare = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  // const endMonthlyShare = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23, 59, 59, 999);
-
-  // let monthlyShares = await Articals.aggregate([
-  //   { $match: { username: profile._id } },
-  //   { $unwind: "$shareHistory" },
-  //   { $match: { "shareHistory.sharedAt": { $gte: startMonthlyShare, $lte: endMonthlyShare } } },
-  //   { $count: "monthlyShareCount" }
-  // ]);
-
-  // monthlyShares = monthlyShares.length > 0 ? monthlyShares[0].monthlyShareCount : 0;
-  // console.log("monthlyShares", monthlyShares);
-
-  // Daily shares
-  // const startDayShare = new Date();
-  // startDayShare.setHours(0, 0, 0, 0);
-
-  // const endDayShare = new Date();
-  // endDayShare.setHours(23, 59, 59, 999);
-
-  // let dayShares = await Articals.aggregate([
-  //   { $match: { username: profile._id } },
-  //   { $unwind: "$shareHistory" },
-  //   { $match: { "shareHistory.sharedAt": { $gte: startDayShare, $lte: endDayShare } } },
-  //   { $count: "dailyShareCount" }
-  // ]);
-
-  // dayShares = dayShares.length > 0 ? dayShares[0].dailyShareCount : 0;
-  // console.log("dayShares", dayShares);
-
-
-
-  // (1) DAILY SERIES FOR GRAPH (last N days)
-  // GET /dashboard/performance?range=30
-  /*****======== PERFORMANCE GRAPH (Shares, Likes, Views) ==========*****/
-
-  // Example for last 7 days
 
 
   /***** ======== Section share END ========= *****/

@@ -178,7 +178,7 @@ router.get("/blog", getSearchAndRandomArticals)
 // router.post("/blog/blog-contant/:id", getArticalesById)
 
 router.get("/topics/:slug",verifijwt, getArticales)
-router.get("/blog/blog-contant/:id",viewControl)
+router.get("/blog/blog-contant/:id",verifijwt,viewControl)
 // router.get(
 //   "/blog/blog-contant/:id",
 //   verifijwt,

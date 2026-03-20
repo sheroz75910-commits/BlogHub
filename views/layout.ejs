@@ -74,15 +74,15 @@
               
               <% if (title==="home" ) { %>
                 <script src="/user/home.js" defer></script>
-                <script src="/user/navResponsive.js" defer></script>
-          <% } %>
-
-        <% if (title==="blog-contant" ) { %>
-       <script src="/user/blog-content.js" defer></script>
-       <script src="/user/comments.js" defer></script>
-          <% } %>
-
-
+                <% } %>
+                
+                <% if (title==="blog-contant" ) { %>
+                  <script src="/user/blog-content.js" defer></script>
+                  <script src="/user/comments.js" defer></script>
+                  <% } %>
+                  
+                  
+                  <script src="/user/navResponsive.js" defer></script>
     
 
 
@@ -94,7 +94,10 @@
           <% if (title==="Signup" ) { %>
             <script src="/user/Login.js" defer></script>
             <% } %>
-          
+            
+            <% if (title==="edit-profile" ) { %>
+              <script src="/user/edit-profile.js" defer></script>
+              <% } %>
         <!-- <script src="/user/chart.js" defer></script>-->
       
 

@@ -19,13 +19,13 @@ const validatorForRegistration = [
         .notEmpty().withMessage('password is required')
         .escape().withMessage('space not allowed')
         .trim()
-        .isLength({ min: 8, max: 20 }).withMessage('min lenght should be 7 and max should be 13')
+        .isLength({ min: 8, max: 20 }).withMessage('min lenght should be 8 and max should be 20')
         .isStrongPassword().withMessage('password should be contain uppercase, lowercase, symbols and numbers'),
     body('confirmPassword')
         .notEmpty().withMessage('confirmPassword is required')
         .escape().withMessage('space not allowed')
         .trim()
-        .isLength({ min: 8, max: 20 }).withMessage('min lenght should be 7 and max should be 13')
+        .isLength({ min: 8, max: 20 }).withMessage('min lenght should be 8 and max should be 20')
         .isStrongPassword().withMessage('confirmPassword should be contain uppercase, lowercase, symbols and numbers')
 ]
 

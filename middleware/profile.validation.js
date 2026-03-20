@@ -40,7 +40,6 @@ const profileValivation = [
         }),
        
     body('phone')
-        .matches(/^\S*$/).withMessage("No spaces allowed")
         .trim()
         .optional({ checkFalsy: true })
         .isMobilePhone("any")
