@@ -57,8 +57,12 @@ const userDashboard = asyncHandler(async (req, res) => {
   console.log("these are all today posted artical", todayArtical);
 
 
+  
   //    Total like of all blogs
-  const allLikes = await ArticleLike.countDocuments();
+  const articleIds = await Articals.find({username : profile._id}, {_id: 1})
+  const articleId = articleIds.map(article => article._id)
+
+  const allLikes = await ArticleLike.countDocuments({article : {$in : articleId}});
   
   console.log("allLikes", allLikes);
   
@@ -69,7 +73,7 @@ const userDashboard = asyncHandler(async (req, res) => {
   const endDateForLikes = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 23, 59, 59, 999)
 
   const monthlyLikes = await ArticleLike.countDocuments({
-       user : userId,
+      article :{$in : articleId},
     createdAt : {$gte : startDataForLikes, $lte : endDateForLikes}
   })
  
@@ -80,7 +84,7 @@ const userDashboard = asyncHandler(async (req, res) => {
   dayend.setHours(23, 59, 59, 999)
 
   const dayLikes = await ArticleLike.countDocuments({
-    //  user : userId,
+     article :{$in : articleId},
     
     createdAt :{$gte : dayStart, $lte : dayend}
   })
@@ -92,7 +96,7 @@ const userDashboard = asyncHandler(async (req, res) => {
 
 
 
-  const comments = await Comment.countDocuments({ User: req.user._id });
+  const comments = await Comment.countDocuments({articls : {$in : articleId}});
   console.log("all commmensts are", comments);
 
 
@@ -103,7 +107,7 @@ const userDashboard = asyncHandler(async (req, res) => {
 
   const monthlyComment = await Comment.countDocuments(
     {
-      User : req.user._id,
+      articls : {$in : articleId},
       createdAt: { $gte: monthlyCommentStart, $lte: monthlyCommentEnd }
     }
   )
@@ -118,7 +122,7 @@ const userDashboard = asyncHandler(async (req, res) => {
 
   const dayCommets = await Comment.countDocuments(
     {
-      User : req.user._id,
+      articls : {$in : articleId},
       createdAt: { $gte: dayCommetStart, $lte: dayCommetEnd }
 
     }
@@ -151,41 +155,6 @@ const userDashboard = asyncHandler(async (req, res) => {
   })
 
 
-//  const dayviewsStart = new Date()
-//   dayviewsStart.setHours(0, 0, 0, 0)
-
-
-  // const dayviewsEnd = new Date()
-  // dayviewsEnd.setHours(23, 59, 59, 999)
-
-  
-  // const monthlyViewsStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-  // const monthlyViewsEnd = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23, 59, 59, 999)
-
-
-
-
-// const views = await ArticleView.aggregate([
-//   {$match :{User :  req.user._id}},
-//   {
-//     $group:{
-//       _id : null,
-//       totalViews: {$sum : "$monetized"},
-//       monthViews: {$sum : {$ifNull:[`${month} $monthly.${monthKey}.views`]}},
-//       todayViews:  {$sum : "$daily.monetized"}
-//     } 
-//     //  [`daily.${dayKey}.views`]: 1,
-//     //       [`monthly.${monthKey}.views`]: 1
-//   }
-// ]);
-// console.log("thsi is allviews ",views);
-
-
-// const viewDoc = await ArticleView.findOne({ article: articleId });
-
-// const totalViews = viewDoc?.monthly?.total || 0;
-
-// console.log("Total Views:", totalViews);
 
 
 const now = new Date();
@@ -196,9 +165,12 @@ const monthKey = dayKey.slice(0, 7);             // "2026-01"
 
 
 
-const views = await ArticleView.find({User : req.user._id})
+const views = await ArticleView.find({article :{$in : articleId},})
 
 console.log("view", views);
+
+
+
 
 
 
@@ -208,19 +180,6 @@ const todayViews = views.reduce((sum, view) => sum +(view?.daily?.get(dayKey)?.m
 console.log("totalViews", totalViews);
 console.log("monthViews", monthViews);
 console.log("todayViews", todayViews);
-// const totalViews = views[0]?.monetized || 0;
-// const monthViews = views[0]?.monthly?.get(monthKey)?.monetized || 0;
-
-// const todayViews = views[0]?.daily?.get(dayKey)?.monetized || 0;
-
-
-
-// console.log({ totalViews, todayViews, monthViews });
-
-
-//  totalShareArticals,
-//     monthlyShares,
-//     dayShares,
 
 
 const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
@@ -236,7 +195,7 @@ enddayDate.setHours(23,59,59,999)
 
 const totalShare = await ArticleShare.aggregate([
   {
-    $match :{user : userId}
+    $match :{article : {$in : articleId}}
   },
   {
     $count : "total"
@@ -246,7 +205,7 @@ const totalShare = await ArticleShare.aggregate([
 const Shares = await ArticleShare.aggregate([
   {
     $match :{
-      user : userId,
+      article: { $in: articleId },
       createdAt :{$gte : monthStart, $lte : monthEnd}
     }
   },
@@ -258,7 +217,7 @@ const Shares = await ArticleShare.aggregate([
 const daySharesArticle = await ArticleShare.aggregate([
   {
     $match :{
-      user : userId,
+     article: { $in: articleId },
       createdAt :{$gte : StartdayDate, $lte : enddayDate}
     }
     
@@ -310,9 +269,14 @@ const getDashbordChartData = asyncHandler(async (req, res) => {
   // Fetch all articles once
   // .select("views.daily like shareHistory");
   // console.log("articles",articles);
-  const viewsArticles = await ArticleView.find({ User: userId })
-  const likedArticals = await ArticleLike.find({user : userId})
-  const shareArticals = await ArticleShare.find({user : userId})
+  const profile = await Profile.findOne({User : userId})
+  console.log("profile from db", profile);
+  
+
+  const articalId = await Articals.find({username : profile.id})
+  const viewsArticles = await ArticleView.find({ article : {$in : articalId} })
+  const likedArticals = await ArticleLike.find({article : {$in : articalId}})
+  const shareArticals = await ArticleShare.find({article : {$in : articalId}})
   // console.log("viewsArticles", viewsArticles);
   // console.log("likedArtical", likedArticals);
   // console.log("shareArtical", shareArticals);
@@ -344,16 +308,18 @@ const getDashbordChartData = asyncHandler(async (req, res) => {
     // console.log("dayViews", dayViews);
     
 
+    // const dayLIke = await ArticleLike.find()
+
    viewsArticles?.forEach(articalView =>{
       dayViews += articalView.daily?.get(dayKey)?.monetized || 0 
    })
     likedArticals.forEach(like =>{
-      const likeDate =  like.likedAt.toISOString().slice(0, 10)
+      const likeDate =  like.createdAt.toISOString().slice(0, 10)
       if (likeDate === dayKey)  dayLikes +=1
     })
     
     shareArticals.forEach(shareArtical =>{
-       const shareDate = shareArtical.sharedAt.toISOString().slice(0, 10)
+       const shareDate = shareArtical.createdAt.toISOString().slice(0, 10)
        if (shareDate === dayKey) dayShares +=1
     })
 

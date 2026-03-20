@@ -20,6 +20,7 @@ const SingupSchema = new Schema({
         required: function () { return !this.GoogleId },
         unique: true,
         lowercase: true,
+         sparse: true,
         trim: true,
         validate: {
             validator: v => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
@@ -30,10 +31,11 @@ const SingupSchema = new Schema({
         type: String,
         lowercase: true,
         unique : true,
+        sparse: true,
         trim: true,
         required: function () { return !this.GoogleId; },
         validate: {
-            validator: v => !v || /^[A-Za-z][A-Za-z0-9]{2,9}$/.test(v),
+            validator: v => !v || /^[A-Za-z][A-Za-z0-9]{4,9}$/.test(v),
             message: "Only letters & numbers, 5–10 characters"
         }
     },

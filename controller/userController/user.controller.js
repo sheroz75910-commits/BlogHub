@@ -47,7 +47,7 @@ const submitSingupData = asyncHandler(async (req, res) => {
 
     const { Username, Email, password, confirmPassword } = req.body;
 
-    if ([Username, Email, password].some((field => !field))) {
+    if ([Username, Email, password, confirmPassword].some((field => !field))) {
         req.flash("error", "All fields are required!");
         return res.redirect("/signup");
     }
@@ -66,12 +66,18 @@ const submitSingupData = asyncHandler(async (req, res) => {
     }
 
 
-         const userExisted = await User.findOne({ 
-            $or :[{Email}, {Username}]
-          });
+       const normalizedEmail = Email.trim().toLowerCase();
+    const normalizedUsername = Username.trim().toLowerCase();
+
+    const userExisted = await User.findOne({
+        $or: [
+            { Email: normalizedEmail },
+            { Username: normalizedUsername }
+        ]
+    });
 
           if (userExisted) {
-              if (userExisted.Email === Email) {
+              if (userExisted.Email === normalizedEmail) {
                  req.flash("error", "User already exists with that Email");
                 }else{
                   req.flash("error", "User already exists with that Username");
@@ -87,8 +93,8 @@ const submitSingupData = asyncHandler(async (req, res) => {
    let userSingup
     try {
          userSingup = await User.create({
-            Username,
-            Email,
+            Username : normalizedUsername,
+            Email : normalizedEmail,
             password,
             role: "user"
         })
@@ -99,6 +105,11 @@ const submitSingupData = asyncHandler(async (req, res) => {
          return res.redirect("/signup")
         }
     }
+
+
+
+    
+
 
     const otpCode = await userSingup.generateOtpCode()
 

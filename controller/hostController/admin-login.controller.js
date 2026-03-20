@@ -1,5 +1,6 @@
 import { validationResult } from "express-validator";
 import User from "../../models/Signup.model.js";
+ import bcrypt from "bcrypt";
 import asyncHandler from "../../utils/asyncHandler.js";
 import ms from "ms";
 import ApiError from "../../utils/ApiError.js"; // make sure you have this
@@ -20,8 +21,13 @@ const adminLogin = asyncHandler(async (req, res) => {
 
   const { identifier, password } = req.body;
   
+  console.log("identifier", identifier);
+  console.log("password", password);
   
+ 
 
+const hash = await bcrypt.hash("Shah1234", 10);
+console.log(hash);
   
   if (!identifier || !password) {
     req.flash("error", "Both username/email and password are required.");

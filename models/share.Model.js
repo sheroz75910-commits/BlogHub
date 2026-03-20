@@ -17,7 +17,7 @@ const articleShareSchema = new mongoose.Schema({
     enum: ['messenger','linkedin','snapchat','telegram','whatsapp','twitter','instagram','facebook','google','other'], 
     required: true 
   },
-  sharedAt: { type: Date, default: Date.now },
+  // sharedAt: { type: Date, default: Date.now },
 }, { timestamps: true });
 
 export const ArticleShare = mongoose.model("ArticleShare", articleShareSchema);

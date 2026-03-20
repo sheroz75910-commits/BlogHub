@@ -11,10 +11,10 @@ const articleLikeSchema = new mongoose.Schema({
         ref: "User", 
         required: true, 
     },
-    likedAt: { 
-        type: Date, 
-        default: Date.now 
-    },
+    // likedAt: { 
+    //     type: Date, 
+    //     default: Date.now 
+    // },
 }, { timestamps: true });
 
 const ArticleLike = mongoose.model("articleLike", articleLikeSchema);

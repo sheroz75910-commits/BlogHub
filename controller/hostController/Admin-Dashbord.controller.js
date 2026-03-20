@@ -483,13 +483,10 @@ const getChartData = asyncHandler(async (req, res) => {
   startday.setDate(startday.getDate() - (days - 1));
   startday.setHours(0, 0, 0, 0);
 
-  const endDay = new Date()
-  endDay.setHours(23, 59, 59, 999)
+  // const endDay = new Date()
+  // endDay.setHours(23, 59, 59, 999)
 
-  const articalGraph = await Articals.find()
-  const viewForGraph = await ArticleView.find()
-  const likeGraph = await ArticleLike.find()
-  const shareGraph = await ArticleShare.find()
+
 
  
 
@@ -497,52 +494,68 @@ const getChartData = asyncHandler(async (req, res) => {
   for (let i = 0; i < days; i++) {
     let date = new Date(startday);
     date.setDate(startday.getDate() + i); // read startday only
-    const dayStr = date.toISOString().slice(0, 10) // YYYY-MM-DD format for aggregation
+    
+const dayStr = date.toISOString().split("T")[0]; // YYYY-MM-DD format for aggregation
+console.log("dayStr", dayStr);
 
-    // const now = new Date()
-    // const dayKey = now.toISOString().slice(0, 10)
+       const startDate = new Date(date)
+       startDate.setHours(0,0,0,0)
+
+       const endDate= new Date(date)
+       endDate.setHours(23,59,59,999)
+
+  
 
     labels.push(dayStr);
 
-     let blogsCount = 0;
-    let likeCount = 0;
-    let sharesCount = 0;
+    //  let blogsCount = 0;
+    // let likeCount = 0;
+    // let sharesCount = 0;
     let viewCount = 0;
 
-    console.log("blogsCount", blogsCount);
-    console.log("likeCount", likeCount);
-    console.log("sharesCount", sharesCount);
-    console.log("viewCount", viewCount);
     
 
+    const articalGraph = await Articals.countDocuments({createdAt :{$gte : startDate, $lte : endDate}})
+    console.log("articalGraph", articalGraph);
+    
+    articalArr.push(articalGraph)
 
-   articalGraph?.forEach(article =>{
-    // const createArtile = article.createdAt.toISOString().slice(0, 10)
-    if (article?.createdAt.toISOString().slice(0, 10) === dayStr)  blogsCount +=1
-   })
+  
+  const likeGraph = await ArticleLike.countDocuments({createdAt :{$gte : startDate, $lte : endDate}})
+  console.log("likeGraph", likeGraph);
+  
+  likeArr.push(likeGraph)
+  const shareGraph = await ArticleShare.countDocuments({createdAt :{$gte : startDate, $lte : endDate}})
+  console.log("shareGraph", shareGraph);
+  shareArr.push(shareGraph)
 
+
+
+    const viewForGraph = await ArticleView.find({}).lean();
+      
+      console.log(`Total ArticleView documents:`, viewForGraph.length);
+
+  console.log("viewForGraph", viewForGraph);
+  const dayStrview = date.toLocaleDateString("en-CA"); 
+  viewForGraph?.forEach(view =>{
+    console.log(" view?.daily?.[dayStr]?.monetized",  view?.daily?.[dayStr]?.monetized);
+    
+   viewCount += view?.daily?.[dayStrview]?.monetized || 0;
+   console.log("viewCount", viewCount);
+  })
    
-
-   likeGraph.forEach(like =>{
-    // const likeAt = like?.likedAt.toISOString().slice(0, 10)
-    if ( like?.likedAt.toISOString().slice(0, 10) === dayStr)  likeCount +=1;
-   })
-
-   shareGraph.forEach(share =>{
-    // const sharedAt = share?.sharedAt.toISOString().slice(0, 10)
-    if (share?.sharedAt.toISOString().slice(0, 10) === dayStr)  sharesCount +=1;
-   })
+  
 
 
-   viewForGraph?.forEach(view =>{
-    viewCount += view?.daily?.get(dayStr)?.monetized || 0;
-   })
+
     
-    
-    articalArr.push(blogsCount)
-    likeArr.push(likeCount)
-    shareArr.push(sharesCount)
+    // articalArr.push(blogsCount)
+    // likeArr.push(likeCount)
+    // shareArr.push(sharesCount)
     viewsArr.push(viewCount)
+
+    console.log("the is at the last of the admin dashbord");
+    
     // commentArr.push(blogsCount)
   }
 
@@ -560,3 +573,78 @@ export {
   dashboardController,
   getChartData
 }
+
+
+
+  //  const viewAggregation = await ArticleView.aggregate([
+
+
+  //       {
+  //         $project: {
+  //           dailyData: { $objectToArray: "$daily" } // Convert map to array of [key, value]
+  //         }
+  //       },
+  //       { $unwind: "$dailyData" },
+  //       {
+  //         $match: {
+  //           "dailyData.k": dayStr // Match the day key
+  //         }
+  //       },
+  //       {
+  //         $group: {
+  //           _id: null,
+  //           totalMonetized: { $sum: "$dailyData.v.monetized" }
+  //         }
+  //       }
+  //     ]);
+
+      // console.log("viewAggregation", viewAggregation);
+      
+
+      // const viewCount = viewAggregation.length > 0 ? viewAggregation[0].totalMonetized : 0;
+      // console.log(`Views monetized on ${dayStr}:`, viewCount);
+      // viewsArr.push(viewCount);
+
+
+
+
+  // const viewForGraph = await ArticleView.aggregate([
+  //  {
+  //   $project :{
+       
+  //     dailyViews :{$objectToArray : "$daily"}
+    
+  //   }
+  //  },
+  //   {$unwind : "$dailyViews"},
+  //   {
+  //     $match :{
+  //       "dailyViews.k" : dayStr
+  //     }
+  //   },
+  //   {
+  //     $group :{
+  //      _id: null,
+  //           totalMonetized: { $sum: "$dailyData.v.monetized" }
+  //     }
+  //   }
+  // ])
+
+
+
+  //  articalGraph?.forEach(article =>{
+  //   // const createArtile = article.createdAt.toISOString().slice(0, 10)
+  //   if (article?.createdAt.toISOString().slice(0, 10) === dayStr)  blogsCount +=1
+  //  })
+
+   
+
+  //  likeGraph.forEach(like =>{
+  //   // const likeAt = like?.likedAt.toISOString().slice(0, 10)
+  //   if ( like?.likedAt.toISOString().slice(0, 10) === dayStr)  likeCount +=1;
+  //  })
+
+  //  shareGraph.forEach(share =>{
+  //   // const sharedAt = share?.sharedAt.toISOString().slice(0, 10)
+  //   if (share?.sharedAt.toISOString().slice(0, 10) === dayStr)  sharesCount +=1;
+  //  })
