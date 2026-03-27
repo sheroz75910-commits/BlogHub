@@ -77,11 +77,7 @@ const submitSingupData = asyncHandler(async (req, res) => {
     });
 
           if (userExisted) {
-              if (userExisted.Email === normalizedEmail) {
-                 req.flash("error", "User already exists with that Email");
-                }else{
-                  req.flash("error", "User already exists with that Username");
-              }
+             req.flash("error", "User already exists with that Email and Username");
              return res.redirect("/signup")
           }
 

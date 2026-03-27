@@ -111,7 +111,7 @@ const userGraph = asyncHandler(async (req, res) => {
                 $dateToString: {
                   format: "%Y-%m-%d",
                   date: "$lastLoginAt",
-                  timezone: "+05:00"
+                  // timezone: "+05:00"
                 }
               },
               count: { $sum: 1 }
@@ -128,7 +128,7 @@ const userGraph = asyncHandler(async (req, res) => {
                 $dateToString: {
                   format: "%Y-%m-%d",
                   date: "$createdAt",
-                  timezone: "+05:00"
+                  // timezone: "+05:00"
                 }
               },
               count: { $sum: 1 }
@@ -145,7 +145,7 @@ const userGraph = asyncHandler(async (req, res) => {
                 $dateToString: {
                   format: "%Y-%m-%d",
                   date: "$lastLoginAt",
-                  timezone: "+05:00"
+                  // timezone: "+05:00"
                 }
               },
               count: { $sum: 1 }

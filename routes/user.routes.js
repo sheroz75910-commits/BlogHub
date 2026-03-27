@@ -77,7 +77,7 @@ router.get('/auth/google/callback',passport.authenticate('google'), googlecontro
 
 router.get('/profile', verifijwt, getProfileForUpdate)
 router.post('/edit-profile',verifijwt, (req, res)=>{res.render('edit-profile', {layout : false, title: 'edit-profile'})})
-router.post('/profile', verifijwt, upload.single("profile_Image"), profileValivation, createORUpdateProfile)
+router.post('/profile', verifijwt, upload.single("profile_Image"), ...profileValivation, createORUpdateProfile)
 router.get('/profile/:cat',verifijwt, ArticleList)
 router.get('/profile/list/:category',verifijwt, articleListByApi)
 router.use("/profile/Dashbord",verifijwt, dashboardLayout);
