@@ -42,8 +42,8 @@ const generateAccessAndRefreshToken = async (userId) => {
 
 const submitSingupData = asyncHandler(async (req, res) => {
 
- console.log("this is submit Singup route");
- 
+    console.log("this is submit Singup route");
+
 
     const { Username, Email, password, confirmPassword } = req.body;
 
@@ -66,7 +66,7 @@ const submitSingupData = asyncHandler(async (req, res) => {
     }
 
 
-       const normalizedEmail = Email.trim().toLowerCase();
+    const normalizedEmail = Email.trim().toLowerCase();
     const normalizedUsername = Username.trim().toLowerCase();
 
     const userExisted = await User.findOne({
@@ -76,35 +76,54 @@ const submitSingupData = asyncHandler(async (req, res) => {
         ]
     });
 
-          if (userExisted) {
-             req.flash("error", "User already exists with that Email and Username");
-             return res.redirect("/signup")
-          }
-
-    
-
-
-    // continue with creating the user
-
-   let userSingup
-    try {
-         userSingup = await User.create({
-            Username : normalizedUsername,
-            Email : normalizedEmail,
-            password,
-            role: "user"
-        })
-    } catch (error) {
-        if (error.code === 11000) {
-            if (error.keyValue.Email) req.flash("error", "User already exists with that Email");
-            else if (error.keyValue.Username) req.flash("error", "User already exists with that Username");
-         return res.redirect("/signup")
-        }
+    if (userExisted) {
+        req.flash("error", "User already exists with that Email and Username");
+        return res.redirect("/signup")
     }
 
 
 
-    
+
+    const userSingup = await User.create({
+        Username: normalizedUsername,
+        Email: normalizedEmail,
+        password: password,
+        role: "user"
+    })
+
+    console.log("userSingup", userSingup)
+    // continue with creating the user
+
+    // let userSingup
+    // try {
+    //     userSingup = await User.create({
+    //         Username: normalizedUsername,
+    //         Email: normalizedEmail,
+    //         password,
+    //         role: "user"
+    //     })
+    // } catch (error) {
+    //     if (error.code === 11000) {
+    //         if (error.keyValue.Email) req.flash("error", "User already exists with that Email");
+    //         else if (error.keyValue.Username) req.flash("error", "User already exists with that Username");
+    //         return res.redirect("/signup")
+    //     }
+    // }
+
+
+
+
+    //  console.log("========== CREATE ERROR ==========");
+    //     console.log(error);
+    //     console.log(error.message);
+    //     console.log("==================================");
+
+    //     return res.status(500).send(error.message);
+
+
+
+
+
 
 
     const otpCode = await userSingup.generateOtpCode()
@@ -129,12 +148,12 @@ const submitSingupData = asyncHandler(async (req, res) => {
     }
 
 
-    
-    req.session.Email = userSingup.Email;
-    console.log("this is in session",  req.session );
-    console.log("this is in session",  req.session.Email );
 
-    
+    req.session.Email = userSingup.Email;
+    console.log("this is in session", req.session);
+    console.log("this is in session", req.session.Email);
+
+
     req.flash("success", "Signup successful! OTP sent to your email.");
     return res.redirect('/otp');
 
@@ -186,7 +205,7 @@ const submitLoginData = asyncHandler(async (req, res) => {
     }
 
     existedUser.lastLoginAt = new Date();
-    await existedUser.save({validateBeforeSave : false});
+    await existedUser.save({ validateBeforeSave: false });
     //   userExist.lastLoginAt = new Date();
 
     const { refreshToken, accessToken } = await generateAccessAndRefreshToken(existedUser._id)
@@ -276,7 +295,7 @@ const updatePassword = asyncHandler(async (req, res) => {
     const token = req.params.token || req.body.token;
 
     console.log("token", token);
-    
+
     if (!token) {
         req.flash("error", "Please verify your email before reset Password.");
         return res.redirect("forgot-password");
@@ -306,17 +325,17 @@ const updatePassword = asyncHandler(async (req, res) => {
 
     }
 
-        userExist.password = newPassword;
-        userExist.resetPasswordToken = undefined;
-        userExist.resetTokenExpiry = undefined;
-        // await userExist.save({ validateBeforeSave: false })
+    userExist.password = newPassword;
+    userExist.resetPasswordToken = undefined;
+    userExist.resetTokenExpiry = undefined;
+    // await userExist.save({ validateBeforeSave: false })
 
 
-         userExist.lastLoginAt = new Date();
+    userExist.lastLoginAt = new Date();
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(userExist._id)
     //  userExist.refreshToken = refreshToken;
-     await userExist.save({validateBeforeSave : false})
+    await userExist.save({ validateBeforeSave: false })
 
     const userUpdated = await User.findById(userExist._id).select("-password -refreshToken")
     const accessTokenOption = {
@@ -334,13 +353,13 @@ const updatePassword = asyncHandler(async (req, res) => {
 
     res.cookie("accessToken", accessToken, accessTokenOption)
     res.cookie("refreshToken", refreshToken, refreshTokenOption)
-      req.flash("success", "you have successfully reset Password and now logging");
-        return res.redirect("/");
-//   return res.redirect('/');
+    req.flash("success", "you have successfully reset Password and now logging");
+    return res.redirect("/");
+    //   return res.redirect('/');
 })
 
 const googlecontroller = asyncHandler(async (req, res) => {
-      
+
     const { user, access_Token, refresh_Token } = req.user;
 
     const accessTokenOption = {
@@ -363,10 +382,10 @@ const googlecontroller = asyncHandler(async (req, res) => {
     const profile = await Profile.findOne({ User: req.user._id })
 
     if (profile) {
-    return res.redirect('/home');
-} else {
-    return res.redirect('/profile/edit'); // or whatever your edit-profile route is
-}
+        return res.redirect('/home');
+    } else {
+        return res.redirect('/profile/edit'); // or whatever your edit-profile route is
+    }
     // if (profile) {
     //     return res.render("home", { title: "home" });
     //     // return res.render("profile", { title: "profile", profile });
@@ -385,7 +404,7 @@ const logOut = asyncHandler(async (req, res) => {
         sameSite: "strict"
     });
     req.flash("success", "Your are Logging Out Successfully");
-  return res.redirect("/home");
+    return res.redirect("/home");
 });
 
 

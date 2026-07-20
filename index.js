@@ -34,7 +34,7 @@ import path from "path"
 
 
 app.use(session({
-    // store: new RedisStore({ client: redisClient }),
+  // store: new RedisStore({ client: redisClient }),
   secret: process.env.SESSION_ID,
   resave: false,
   saveUninitialized: false, // better for production
@@ -47,7 +47,7 @@ app.use(session({
     secure: false,
     // secure: process.env.NODE_ENV === 'production', // only HTTPS in production
     httpOnly: true,
-    sameSite : "lax",
+    sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000 // 14 days
   },
   rolling: true
@@ -131,14 +131,14 @@ app.set("layout", "layout")
 
 
 app.use(cookieParser())
-app.use((req, res,next)=>{
-   res.locals.scripts = "";
-   next()
+app.use((req, res, next) => {
+  res.locals.scripts = "";
+  next()
 })
 
-app.use((req, res, next)=>{
-   res.locals.success = req.flash("success") || [];
-    res.locals.error = req.flash("error") || [];
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success") || [];
+  res.locals.error = req.flash("error") || [];
   next()
 })
 
@@ -146,14 +146,14 @@ app.use((req, res, next)=>{
 app.use(async (req, res, next) => {
   try {
     const Token = req.cookies?.accessToken;
-    
+
     if (Token) {
-      
+
       const decodedToken = jwt.verify(Token, process.env.ACCESS_TOKEN_SECRET);
 
       const user = await User.findById(decodedToken.id).select("-password -refreshToken");
       if (user) {
-           //  Block unverified users from being treated as logged-in
+        //  Block unverified users from being treated as logged-in
         if (!user || !user.emailVerified || !user.isValid) {
           req.user = null;
           res.locals.currentUser = null;
@@ -162,26 +162,26 @@ app.use(async (req, res, next) => {
         req.user = user;                  //  full user object
         res.locals.currentUser = user;    //  EJS can access `currentUser`
       } else {
-         req.user = null;                       
-         res.locals.currentUser = null;          
-                                                      
+        req.user = null;
+        res.locals.currentUser = null;
+
       }
     } else {
       req.user = null;
       res.locals.currentUser = null;
     }
-    
+
   } catch (error) {
-    req.user = null;                                   
-    res.locals.currentUser = null;                      
-  }                                                       
+    req.user = null;
+    res.locals.currentUser = null;
+  }
   next();
 });
 
 // app.use(async (req, res, next) => {
 //   try {
 //     const Token = req.cookies?.accessToken;
-    
+
 //     if (Token) {
 //       const decodedToken = jwt.verify(Token, process.env.ACCESS_TOKEN_SECRET);
 
@@ -206,26 +206,26 @@ app.use(async (req, res, next) => {
 // });
 
 
-app.use(async(req, res, next)=>{
-   try {
-      const category = await Categorie.find()
-      res.locals.category = category
-      } catch (error) {
-         res.locals.category = []
-   }
-   next()
+app.use(async (req, res, next) => {
+  try {
+    const category = await Categorie.find()
+    res.locals.category = category
+  } catch (error) {
+    res.locals.category = []
+  }
+  next()
 })
 
-app.use(async(req, res, next)=>{
-  
-    try {
-      const countUpdate = await update.find({status : "unread"}).countDocuments()
-     res.locals.countUpdate = countUpdate;
-    } catch (error) {
-      res.locals.countUpdate = 0
-    }
-   
-   next()
+app.use(async (req, res, next) => {
+
+  try {
+    const countUpdate = await update.find({ status: "unread" }).countDocuments()
+    res.locals.countUpdate = countUpdate;
+  } catch (error) {
+    res.locals.countUpdate = 0
+  }
+
+  next()
 })
 
 // app.use("/article/:id", (req, res, next) => {
@@ -241,10 +241,10 @@ app.use(express.static('public'))
 
 
 // app.use("/", userRateLimit)
-app.use("/api",adminRateLimit, hostRouter)
+app.use("/api", adminRateLimit, hostRouter)
 
 
-app.use("/",userRateLimit, userRouter)
+app.use("/", userRateLimit, userRouter)
 app.get("/", (req, res) => {
   res.redirect("/home")
 })

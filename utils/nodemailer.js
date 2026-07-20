@@ -10,6 +10,11 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+console.log("process.env.EMAIL_USER", process.env.EMAIL_USER);
+console.log("process.env.EMAIL_PASS", process.env.EMAIL_PASS);
+
+
+
 const sendMail = async ({ to, subject, text, html, from }) => {
   if (!to) {
     console.error("Recipient email is missing");

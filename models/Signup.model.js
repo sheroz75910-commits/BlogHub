@@ -20,7 +20,7 @@ const SingupSchema = new Schema({
         required: function () { return !this.GoogleId },
         unique: true,
         lowercase: true,
-         sparse: true,
+        sparse: true,
         trim: true,
         validate: {
             validator: v => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
@@ -30,7 +30,7 @@ const SingupSchema = new Schema({
     Username: {
         type: String,
         lowercase: true,
-        unique : true,
+        unique: true,
         sparse: true,
         trim: true,
         required: function () { return !this.GoogleId; },
@@ -63,14 +63,14 @@ const SingupSchema = new Schema({
         min: 0,
     },
 
-    history :[{
-        article :{
-            type : mongoose.Schema.Types.ObjectId,
-            ref : "Artical"
+    history: [{
+        article: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Artical"
         },
-        createAt :{
-            type : Date,
-            default : Date.now
+        createAt: {
+            type: Date,
+            default: Date.now
         }
     }],
 
@@ -110,12 +110,11 @@ const SingupSchema = new Schema({
 }, { timestamps: true });
 
 
-SingupSchema.pre('save', async function (next) {
-    if (!this.password) return next()
-    if (!this.isModified('password')) return next()
+SingupSchema.pre('save', async function () {
+    if (!this.password) return
+    if (!this.isModified('password')) return
 
     this.password = await bcrypt.hash(this.password, 10)
-    next()
 })
 
 SingupSchema.methods.isCorrectPassword = async function (password) {

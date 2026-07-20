@@ -6,7 +6,7 @@ const isAdmin = asyncHandler(async (req, res, next) => {
         return res.render("403", { layout: false, title: "403" });
     }
     if (!req.user || req.user.role !== "admin") {
-        return res.render("403", { layout: false,title: "403"  });
+        return res.render("403", { layout: false, title: "403" });
     }
 
     if (req.user._id.toString() !== "692eeace5493f6ad655e3f82") {
