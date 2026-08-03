@@ -29,7 +29,7 @@ passport.use(
             Email: profile.emails[0].value,
             Username: profile.displayName.replace(/\s+/g, '').toLowerCase(),
             emailVerified: profile.emails[0].verified,
-            isValid : true
+            isValid: true
           });
 
           await user.save({ validateBeforeSave: false });
