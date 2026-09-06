@@ -11,9 +11,11 @@ COPY package*.json ./
 RUN npm install
 
 # Copy project files
-COPY . .
+COPY backend/ ./backend/
+COPY frontend/ ./frontend/
 
 # Expose application port
+WORKDIR /app/backend
 EXPOSE 3000
 
 # Start the application
