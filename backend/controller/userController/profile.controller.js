@@ -1,0 +1,176 @@
+import asyncHandler from '../../utils/asyncHandler.js'
+import ApiError from '../../utils/ApiError.js'
+import ApiResponse from '../../utils/ApiResponse.js';
+import { Profile } from '../../models/profile.model.js';
+import uploadOnCloudinary from '../../utils/cloudinary.js';
+import { validationResult } from 'express-validator';
+import User from '../../models/Signup.model.js';
+import Categorie from '../../models/categorie.model.js';
+import { title } from 'process';
+import { log } from 'console';
+// import { Profile } from '../../models/profile.model.js';
+
+// profile controller 
+
+const createORUpdateProfile = asyncHandler(async (req, res) => {
+   const { full_name, username, about, email, phone, location, website, twitter, linkedin, facebook } = req.body;
+
+   let { category } = req.body;
+   if (!Array.isArray(category)) {
+      category = category ? [category] : [];
+   }
+
+   let profile = await Profile.findOne({ User: req.user._id });
+
+   if (!profile && category.length === 0) {
+      req.flash("error", "you did not select the Categories");
+      return res.redirect("/profile?edit=true");
+
+   }
+   let imageUrl = null;
+
+   //  Only upload if a file exists
+
+    if (req.file && req.file.path) {
+     try {
+       imageUrl = await uploadOnCloudinary(req.file.path);
+     } catch (error) {
+          req.flash("error", "Image upload failed");
+             return res.redirect("/profile?edit=true");
+     }
+     
+   } 
+
+//   else if (!profile) {
+//       req.flash("error", "you did not upload the Image");
+//       return res.redirect("/profile?edit=true");
+
+//    }
+
+   // Validate AFTER uploading only if file exists
+   const result = validationResult(req);
+   if (!result.isEmpty()) {
+   result.array().forEach(err => req.flash("error", err.msg))
+        return res.redirect("/profile?edit=true");
+   }
+
+console.log("profile is going to create");
+
+
+if (!profile) {
+      //  Create new profile
+      profile = await Profile.create({
+         User: req.user._id,
+         full_name,
+         username,
+         about,
+         email,
+         phone,
+         location,
+         website,
+         socials: { twitter, linkedin, facebook },
+         category,
+         profile_Image: imageUrl?.secure_url || ""
+      });
+      
+      
+         req.flash("success", "Your Profile create Successfully");
+             return res.redirect("/profile");
+            //  return res.redirect("/profile?edit=true");
+    
+      // return res.render("Profile", {showLayout : true, title: "profile", page: "profile", profile });
+   }
+      console.log("profile is now created");
+      
+      //  Update profile
+      const updateprofile = {
+         full_name,
+         about,
+      phone,
+      location,
+      profile_Image: imageUrl?.secure_url || profile.profile_Image, // fallback to old image
+   };
+
+
+   console.log("profile is going to update");
+try {
+   profile = await Profile.findOneAndUpdate(
+      { User: req.user._id },
+      { $set: updateprofile },
+         { new: true }
+      );
+   } catch (error) {
+     req.flash("success", "you profile is successfully Update");
+     return res.redirect("/profile");
+   }
+   
+   console.log("profile is now updated");
+   return res.redirect("/profile");
+
+});
+
+
+
+const getProfileForUpdate = asyncHandler(async (req, res) => {
+   const useId = req.user._id
+   const profile = await Profile.findOne({ User: useId})
+   // const user = await User.findOne({useId})
+   if (req.query.edit === "true") {
+      return res.render("edit-profile", {layout: false, title: "Edit Profile",page : "Edit profile", profile });
+   }
+   if (profile) {
+      res.render("Profile", {showLayout : true, title: "Profile", page : "Profile", profile })
+   } else {
+      res.render("edit-profile", {
+         layout: false,
+         title: "edit-profile",
+          page : "edit Profile",
+         profile,
+         // category: await Categorie.find()
+      })
+   }
+
+
+})
+
+
+// const ProfileUpdate = asyncHandler(async (req, res) => {
+
+//    //  const {full_name, username, about, email, phone, location, website, twitter, linkedin, facebook,} = req.body
+//    const { full_name, username } = req.body
+//    if (req.file.path) {
+//       profile.profile_Image = req.file.path
+//    }
+//    const profile = await Profile.findByIdAndUpdate(
+//       req.params.id,
+//       {
+//          $set: {
+//             full_name,
+//             username,
+//             // about,
+//             // email,
+//             // phone,
+//             // location,
+//             // website,
+//             // twitter,
+//             // linkedin,
+//             // facebook
+//          }
+//       },
+//       { new: true }
+//    )
+
+//    res.redirect(`/api/user/profile/${req.params.id}`)
+
+// })
+
+
+
+
+
+export {
+   createORUpdateProfile,
+   getProfileForUpdate,
+   // ProfileUpdate
+}
+

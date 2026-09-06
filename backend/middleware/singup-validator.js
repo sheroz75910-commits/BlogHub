@@ -1,0 +1,32 @@
+import { body } from "express-validator"
+// import , body from 'express-validator'
+
+const validatorForRegistration = [
+
+    body('Username')
+        .notEmpty().withMessage('Username is required')
+        .escape().withMessage('space not allowed')
+        .trim()
+        .isLength({ min: 5, max: 10 }).withMessage('min lenght should be 5 and max lenght  10')
+        .isAlphanumeric().withMessage('just use number and letters'),
+
+    body('Email')
+        .notEmpty().withMessage('gmail is required')
+        .escape().withMessage('space not allowed')
+        .trim().normalizeEmail()
+        .isEmail().withMessage('please input gmail according to the standered formate'),
+    body('password')
+        .notEmpty().withMessage('password is required')
+        .escape().withMessage('space not allowed')
+        .trim()
+        .isLength({ min: 8, max: 20 }).withMessage('min lenght should be 8 and max should be 20')
+        .isStrongPassword().withMessage('password should be contain uppercase, lowercase, symbols and numbers'),
+    body('confirmPassword')
+        .notEmpty().withMessage('confirmPassword is required')
+        .escape().withMessage('space not allowed')
+        .trim()
+        .isLength({ min: 8, max: 20 }).withMessage('min lenght should be 8 and max should be 20')
+        .isStrongPassword().withMessage('confirmPassword should be contain uppercase, lowercase, symbols and numbers')
+]
+
+export default validatorForRegistration;
